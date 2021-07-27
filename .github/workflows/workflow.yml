@@ -8,7 +8,7 @@ on:
 jobs:
   js-test:
     runs-on: ubuntu-latest
-    name: "Tests JS files"
+    name: "Test JS files"
     steps:
       - uses: actions/checkout@v2
 
@@ -26,7 +26,7 @@ jobs:
   php-test:
     needs: js-test
     runs-on: ubuntu-latest
-    name: "Tests JS files"
+    name: "Test PHP files"
     steps:
       - name: Cache composer dependencies
         uses: actions/cache@v1
@@ -52,6 +52,7 @@ jobs:
   deploy-prod:
     needs: php-test
     runs-on: ubuntu-latest
+    name: "Deploy to Prod"
     steps:
       - uses: actions/checkout@v2
 
