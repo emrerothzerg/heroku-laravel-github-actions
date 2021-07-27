@@ -107,6 +107,33 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           procfile: "web: vendor/bin/heroku-php-apache2 public/"
 
+  performance-test:
+    runs-on: ubuntu-latest
+    name: "Performance Testing"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+        env:
+          APP_ENV: testing
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run Laravel tests
+        run: npm run test:laravel
+        env:
+          APP_ENV: testing
+
   deploy-prod:
     needs:
       - php-test
@@ -114,6 +141,7 @@ jobs:
       - deploy-dev
       - deploy-staging
       - e2e-test
+      - performance-test
     runs-on: ubuntu-latest
     name: "Deploy to Prod"
     environment: "prod"
