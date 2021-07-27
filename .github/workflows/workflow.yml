@@ -66,6 +66,7 @@ jobs:
     needs:
       - php-test
       - js-test
+      - deploy-dev
     runs-on: ubuntu-latest
     name: "Deploy to Staging"
     steps:
@@ -82,6 +83,8 @@ jobs:
     needs:
       - php-test
       - js-test
+      - deploy-dev
+      - deploy-staging
     runs-on: ubuntu-latest
     name: "Deploy to Prod"
     environment: "prod"
