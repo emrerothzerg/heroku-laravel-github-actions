@@ -63,6 +63,10 @@ jobs:
           procfile: "web: vendor/bin/heroku-php-apache2 public/"
 
   e2e-test:
+    needs:
+      - php-test
+      - js-test
+      - deploy-dev
     runs-on: ubuntu-latest
     name: "E2E Testing"
     steps:
@@ -110,6 +114,11 @@ jobs:
   performance-test:
     runs-on: ubuntu-latest
     name: "Performance Testing"
+    needs:
+      - php-test
+      - js-test
+      - deploy-dev
+      - deploy-staging
     steps:
       - uses: actions/checkout@v2
 
