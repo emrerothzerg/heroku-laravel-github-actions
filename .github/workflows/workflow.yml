@@ -1,6 +1,6 @@
 name: Deploy
 
-on: 
+on:
   push:
     branches:
       - master
@@ -11,11 +11,7 @@ jobs:
     name: "Test JS files"
     steps:
       - uses: actions/checkout@v2
-
-      - name: Test using Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: "14"
+      - uses: c-hive/gha-npm-cache@v1
 
       - name: NPM install
         run: "npm i"
@@ -51,9 +47,9 @@ jobs:
           APP_ENV: testing
 
   deploy-prod:
-    needs: 
-    - php-test
-    - js-test
+    needs:
+      - php-test
+      - js-test
     runs-on: ubuntu-latest
     name: "Deploy to Prod"
     environment: "prod"
