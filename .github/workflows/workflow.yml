@@ -6,8 +6,9 @@ on:
       - master
 
 jobs:
-  test:
+  js-test:
     runs-on: ubuntu-latest
+    name: "Tests JS files"
     steps:
       - uses: actions/checkout@v2
 
@@ -19,11 +20,37 @@ jobs:
       - name: NPM install
         run: "npm i"
 
-  #      - name: Run tests
-  #        run: "npm run test"
+      - name: Run tests
+        run: "npm run test:js"
+
+  php-test:
+    needs: js-test
+    runs-on: ubuntu-latest
+    name: "Tests JS files"
+    steps:
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+        env:
+          APP_ENV: testing
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run Laravel tests
+        run: npm run test:laravel
+        env:
+          APP_ENV: testing
 
   deploy-prod:
-    needs: test
+    needs: php-test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
