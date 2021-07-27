@@ -46,6 +46,38 @@ jobs:
         env:
           APP_ENV: testing
 
+  deploy-dev:
+    needs:
+      - php-test
+      - js-test
+    runs-on: ubuntu-latest
+    name: "Deploy to Dev"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME_DEV}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          procfile: "web: vendor/bin/heroku-php-apache2 public/"
+
+  deploy-staging:
+    needs:
+      - php-test
+      - js-test
+    runs-on: ubuntu-latest
+    name: "Deploy to Staging"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME_DEV}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          procfile: "web: vendor/bin/heroku-php-apache2 public/"
+
   deploy-prod:
     needs:
       - php-test
